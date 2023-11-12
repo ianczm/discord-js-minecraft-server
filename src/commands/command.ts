@@ -1,9 +1,9 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { UserCommand } from "./user.js";
+import { StartServerCommand } from "./server/start.js";
 
 export type Command = {
   data: SlashCommandBuilder;
   execute: (interaction: CommandInteraction) => Promise<void>;
 };
 
-export const DEFAULT_COMMANDS: Command[] = [UserCommand];
+export const DEFAULT_COMMANDS: Command[] = [StartServerCommand];

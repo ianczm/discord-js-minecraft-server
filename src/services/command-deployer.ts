@@ -14,7 +14,7 @@ export class CommandDeployerService {
     if (process.env.BOT_TOKEN === "" || process.env.BOT_TOKEN === undefined) {
       throw new Error("BOT_TOKEN is missing.");
     } else {
-      this.token = process.env.BOT_TOKEN ?? "";
+      this.token = process.env.BOT_TOKEN;
       this.applicationId = process.env.APPLICATION_ID ?? "";
       this.guildId = process.env.GUILD_ID ?? "";
       this.discordClient = new REST().setToken(this.token);
