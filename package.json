@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsup src/index.ts --minify",
+    "build": "tsup src/index.ts --minify --format esm",
     "deploy:commands": "tsx src/scripts/deploy-commands.ts"
   },
   "author": "Ian Chong",
