@@ -1,4 +1,5 @@
-import ping from "ping";
+import axios from "axios";
+import { MCStatus } from "../dto/mcstatus.js";
 
 export class ServerStatusCheckerService {
   serverAddress: string;
@@ -13,10 +14,32 @@ export class ServerStatusCheckerService {
     this.serverAddress = process.env.SERVER_ADDRESS;
   }
 
+  async getStatus() {
+    const response = await axios.get<MCStatus.Response>(
+      `https://api.mcstatus.io/v2/status/java/${this.serverAddress}`,
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Bad response from MCStatus.");
+    }
+
+    const data = response.data;
+
+    return {
+      online: data.online,
+      players: data.online
+        ? data.players.list.map((player) => player.name_raw)
+        : [],
+    };
+  }
+
   async isLive(): Promise<boolean> {
-    const res = await ping.promise.probe(this.serverAddress);
-    console.log(res);
-    console.log(this.serverAddress);
-    return res.alive;
+    try {
+      const status = await this.getStatus();
+      return status.online;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   }
 }

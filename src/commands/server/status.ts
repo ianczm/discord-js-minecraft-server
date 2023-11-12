@@ -1,7 +1,20 @@
 import { SlashCommandBuilder } from "discord.js";
 import { Command, CommandUtils } from "../command.js";
 import { ServerStatusCheckerService } from "../../services/server-status.js";
-import followUpOnInteraction = CommandUtils.followUpOnInteraction;
+
+function buildStatusMessage(status: { players: string[]; online: boolean }) {
+  if (status.online) {
+    if (status.players.length > 0) {
+      return `Server is live with ${
+        status.players.length
+      } player(s): ${status.players.join(", ")}.`;
+    } else {
+      return `Server is live with no players.`;
+    }
+  } else {
+    return "Server is down.";
+  }
+}
 
 export const ServerStatusCommand: Command = {
   data: new SlashCommandBuilder()
@@ -11,10 +24,9 @@ export const ServerStatusCommand: Command = {
     const serverStatus = new ServerStatusCheckerService();
 
     await interaction.deferReply({ ephemeral: true });
-    const followUp = followUpOnInteraction(interaction);
+    const followUp = CommandUtils.followUpOnInteraction(interaction);
 
-    (await serverStatus.isLive())
-      ? await followUp("Server is live.")
-      : await followUp("Server is down.");
+    const status = await serverStatus.getStatus();
+    await followUp(buildStatusMessage(status));
   },
 };
