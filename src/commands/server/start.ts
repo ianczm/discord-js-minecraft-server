@@ -1,9 +1,10 @@
 import { SlashCommandBuilder } from "discord.js";
-import { Command } from "../command.js";
+import { Command, CommandUtils } from "../command.js";
 import { ServerStatusCheckerService } from "../../services/server-status.js";
 import { ServerLauncherService } from "../../services/server-launcher.js";
+import followUpOnInteraction = CommandUtils.followUpOnInteraction;
 
-export const StartServerCommand: Command = {
+export const ServerStartCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("start")
     .setDescription(
@@ -12,9 +13,7 @@ export const StartServerCommand: Command = {
   execute: async (interaction) => {
     const serverStatus = new ServerStatusCheckerService();
     const serverLauncher = new ServerLauncherService();
-
-    const followUp = async (message: string) =>
-      await interaction.followUp({ content: message, ephemeral: true });
+    const followUp = followUpOnInteraction(interaction);
 
     await interaction.deferReply({ ephemeral: true });
 
