@@ -1,13 +1,17 @@
 import { Command, DEFAULT_COMMANDS } from "../commands/command.js";
 import { CommandInteraction } from "discord.js";
+import baseLogger from "../providers/logger.js";
+import { Logger } from "winston";
 
 export class CommandHandler {
   commands: Command[];
   commandMap: { [commandName: string]: Command };
+  logger: Logger;
 
   constructor() {
     this.commands = this.provideCommands();
     this.commandMap = this.mapCommands(this.commands);
+    this.logger = baseLogger.child({ service: "CommandHandler" });
   }
 
   provideCommands() {
@@ -48,9 +52,10 @@ export class CommandHandler {
     const commandName = interaction.commandName;
     const command = this.getCommand(commandName);
     try {
+      this.logger.info("Attempting to execute command.");
       await command.execute(interaction);
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       await this.handleInteractionError(interaction);
     }
   }

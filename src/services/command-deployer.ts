@@ -1,11 +1,14 @@
 import { REST, Routes } from "discord.js";
 import { Command, DEFAULT_COMMANDS } from "../commands/command.js";
 import { UserCommand } from "../commands/user.js";
+import baseLogger from "../providers/logger.js";
+import { Logger } from "winston";
 
 export class CommandDeployerService {
   token: string;
   applicationId: string;
   guildId: string;
+  logger: Logger;
 
   discordClient: REST;
   commands: Command[];
@@ -19,6 +22,7 @@ export class CommandDeployerService {
       this.guildId = process.env.GUILD_ID ?? "";
       this.discordClient = new REST().setToken(this.token);
       this.commands = this.provideCommands();
+      this.logger = baseLogger.child({ service: "CommandDeployerService" });
     }
   }
 
